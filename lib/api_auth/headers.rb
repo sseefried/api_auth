@@ -25,15 +25,17 @@ module ApiAuth
         end
       when /ActionDispatch::Request/
         @request = ActionDispatchRequest.new(request)
+      when /Sinatra::Request/
+        @request = SinatraRequest.new(request)
       else
-        raise UnknownHTTPRequest, "#{request.class.to_s} is not yet supported."
+        raise UnknownHTTPRequest, "#{request.class.to_s} is not yet supported"
       end
       true
     end
-    
+
     # Returns the request timestamp
     def timestamp
-       @request.timestamp 
+       @request.timestamp
     end
 
     # Returns the canonical string computed from the request's headers
@@ -51,15 +53,15 @@ module ApiAuth
     end
 
     def set_date
-      @request.set_date if @request.timestamp.blank?
+      @request.set_date if @request.timestamp.empty?
     end
 
     def calculate_md5
-      @request.populate_content_md5 if @request.content_md5.blank?
+      @request.populate_content_md5 if @request.content_md5.empty?
     end
 
     def md5_mismatch?
-      if @request.content_md5.blank?
+      if @request.content_md5.empty?
         false
       else
         @request.md5_mismatch?

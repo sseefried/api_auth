@@ -6,6 +6,7 @@
 # signature on the server side. If your server resources are implemented as a
 # Rails ActiveResource, it will integrate with that. It will even generate the
 # secret keys necessary for your clients to sign their requests.
+
 module ApiAuth
 
   class << self
@@ -32,7 +33,6 @@ module ApiAuth
     # secret key. Returns true if the request is authentic and false otherwise.
     def authentic?(request, secret_key)
       return false if secret_key.nil?
-
       return !md5_mismatch?(request) && signatures_match?(request, secret_key) && !request_too_old?(request)
     end
 
@@ -60,7 +60,7 @@ module ApiAuth
     def request_too_old?(request)
       headers = Headers.new(request)
       # 900 seconds is 15 minutes
-      Time.parse(headers.timestamp).utc < (Time.current.utc - 900)
+      Time.parse(headers.timestamp).utc < (Time.now.utc - 900)
     end
 
     def md5_mismatch?(request)
